@@ -2,6 +2,8 @@
 
 Soundboard controller to play Youtube videos to a browser interface. Built to be used with apps like [Kenku FM](https://github.com/owlbear-rodeo/kenku-fm). Built using Tauri + Rust + Svelte (TS).
 
+This is a lite version of my Soundboard utility, built with Electron. This app only supports Youtube videos currently.  
+
 ## How it works
 
 9 button always on top window is displayed. Each button references a youtube video id. Navigate using either the number pad, arrows, or mouse. The track will play on loop when selected. Press again to pause.
