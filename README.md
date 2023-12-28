@@ -1,6 +1,12 @@
-# Tauri + Svelte + Typescript
+# Miniboard
 
-This template should help get you started developing with Tauri, Svelte and TypeScript in Vite.
+Soundboard controller to play Youtube videos to a browser interface. Built to be used with apps like [Kenku FM](https://github.com/owlbear-rodeo/kenku-fm). Built using Tauri + Rust + Svelte (TS).
+
+## How it works
+
+9 button always on top window is displayed. Each button references a youtube video id. Navigate using either the number pad, arrows, or mouse. The track will play on loop when selected. Press again to pause.
+
+To play through browser, open at http://localhost:1420/client.html. Audio will automatically be routed from the miniboard to the browser.
 
 ## Recommended IDE Setup
 
