@@ -10,7 +10,7 @@ async function getdb(){
 }
 
 
-export async function loadTracks(page=0) {
+export async function loadTracks(page:number) {
 
 
     let db:Database = await getdb();

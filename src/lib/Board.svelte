@@ -1,11 +1,16 @@
 <script lang="ts">
-    import {createEventDispatcher} from "svelte";
-    import {playState,TrackList,nextPage} from '../store';
+    import {createEventDispatcher, onMount} from "svelte";
+    import {playState,TrackList,nextPage, page} from '../store';
     import type { Keymap } from '../types/Keymap';
     export let focused:number = 0;
     export let current:number = 0;
 
     let state:number;
+    let currPage:number;
+
+    onMount(()=> {nextPage();});
+
+    page.subscribe((p)=> currPage=p);
 
     const unsubscribe = playState.subscribe((v)=> state = v);
 
@@ -79,9 +84,9 @@
             case "ArrowRight": epd(event); moveFocus("x",1); break;
             case "ArrowLeft": epd(event); moveFocus("x",-1); break;
             case "ArrowUp": epd(event); moveFocus("y",-1); break;
-            case "ArrowDown": epd(event); moveFocus("y",1);break;
+            case "ArrowDown": epd(event); moveFocus("y",1); break;
             case "Enter": epd(event); onPress(focused); break;
-            case "p":epd(event); nextPage();break;
+            case "p": epd(event); nextPage(currPage+1); setFocus(0); break;
            
             case "7": case "8": case "9": 
             case "4": case "5": case "6":

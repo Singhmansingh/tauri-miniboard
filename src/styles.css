@@ -139,7 +139,7 @@ button {
 
 .titlebar {
   flex-shrink: 1;
-  background: #1f1f1f;
+  background: #223a1f;
   user-select: none;
   display: flex;
   justify-content: flex-end;
@@ -160,6 +160,7 @@ button {
 .titlebar-button.left {
   position: absolute;
   left:0;
+  
 }
 .titlebar-button:hover {
   background: rgba(245, 245, 245, 0.237);

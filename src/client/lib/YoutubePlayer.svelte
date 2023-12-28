@@ -4,7 +4,7 @@ import type { Options, YouTubePlayer } from 'youtube-player/dist/types';
 import YoutubePlayer from "youtube-player";
 import { onMount } from 'svelte';
 
-import {url, playState} from '../clientstore';
+import {playState} from '../clientstore';
 
 let currentURL:string;
     let playerElem:any;
@@ -19,9 +19,9 @@ let currentURL:string;
     }
     };
 
-    url.subscribe(u => {
-        if(player) player.loadVideoById(u)
-    });
+    export const setUrl = (url:string) => {
+        if(player) player.loadVideoById(url);
+    }
     
 
     function createPlayer(){

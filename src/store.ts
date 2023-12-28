@@ -3,23 +3,31 @@ import type { TrackListType } from "./types/Track";
 import { loadTracks } from './db';
 import { PlayState } from './types/PlayState';
 
-export const playState=writable(PlayState.STOPPED)
+export const playState=writable(PlayState.STOPPED);
+export const page:Writable<number> = writable(0);
 
-let page = 0;
-
-let tracks = await loadTracks(page);
+const MAXPAGE:number = 1;
 
 export const TrackList:Writable<TrackListType> = writable({
     listname:"main",
     platform:"youtube",
-    tracks
+    tracks:[]
 })
 
-export async function nextPage(){
-    page++;
-    if(page>1) page=0;
-    let tracks=await loadTracks(page);
+export async function nextPage(pg:number=0){
     
+    if(pg>MAXPAGE) {
+        page.update(()=> 0);
+        pg=0;
+    } else {
+        page.update(()=> pg);
+    }
+
+    console.log(pg);
+    let tracks=await loadTracks(pg);
+    
+   
+
     TrackList.update((tl)=>{
         
         return {
