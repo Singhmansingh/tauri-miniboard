@@ -9,7 +9,7 @@ export enum WS_STATE {
 }
 
 export const url:Writable<string> = writable('');
-
+export const loop:Writable<number> = writable(0);
 export const playState=writable(-1)
 
 let ws:WebSocket = new WebSocket('ws://127.0.0.1:8081');
@@ -51,6 +51,12 @@ function handle_message(msg:WsMessage){
             console.log(msg.state)
             playState.update(()=> msg.state??-1);
         break;
+
+        case 'loop':
+            console.log(msg.loopState)
+            loop.update(()=> msg.loopState??1);
+        break;
+    
 
     }
 }

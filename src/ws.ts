@@ -41,6 +41,10 @@ export async function sendState(state:number){
   ws.send(JSON.stringify({msgtype:'state', state}));
 }
 
+export async function sendLoopState(loop:number) {
+  ws.send(JSON.stringify({msgtype:'loop', loopState:loop}));
+}
+
 function handle_message(data:WsMessage){
   switch(data.msgtype){
     case 'ack':

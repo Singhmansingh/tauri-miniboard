@@ -1,5 +1,8 @@
 export type WsMessage =  {
-    msgtype: "ack" | "dc" | "url" | string,
+    msgtype: "ack" | "dc" | "url" | "loop" | string,
     url?:string,
-    state?:number
+    state?:number,
+    loopState?:number
+
+
 }

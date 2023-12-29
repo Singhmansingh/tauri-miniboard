@@ -4,48 +4,57 @@ import type { Options, YouTubePlayer } from 'youtube-player/dist/types';
 import YoutubePlayer from "youtube-player";
 import { onMount } from 'svelte';
 
-import {playState} from '../clientstore';
+import {loop} from '../clientstore';
 
 let currentURL:string;
-    let playerElem:any;
-    let player:YouTubePlayer;
+let playerElem:any;
+let player:YouTubePlayer;
+let loopState:number=0;
 
-    onMount(() => createPlayer());
+loop.subscribe(l => loopState=l);
 
-    const options:Options = {
-    //  see https://developers.google.com/youtube/player_parameters
-    playerVars: {
-        autoplay: 1,
-    }
-    };
+onMount(() => createPlayer());
 
-    export const setUrl = (url:string) => {
-        if(player) player.loadVideoById(url);
-    }
+const options:Options = {
+//  see https://developers.google.com/youtube/player_parameters
+playerVars: {
+    autoplay: 1,
+    controls: 0,
     
+}
+};
 
-    function createPlayer(){
-    player = YoutubePlayer(playerElem,options);
-    player.on('stateChange',onstatechange)
+export const setUrl = (url:string) => {
+    if(player) player.loadVideoById(url);
+}
+
+
+function createPlayer(){
+player = YoutubePlayer(playerElem,options);
+player.on('stateChange',onstatechange)
+}
+
+function resetVideo(){
+    if(loopState){
+        player.seekTo(0,false);
+        resume();
     }
 
-    function resetVideo(){
-    player.seekTo(0,false);
-    resume();
-    }
+}
 
-    export const pause = () => { player.pauseVideo(); }
-    export const resume = () => { player.playVideo(); }
 
-    export function onstatechange(event:{target:any,data:number}){
-    console.log(event);
-    switch(event.data){
-        case 0:
-            resetVideo();
-        break;
-    }
+export const pause = () => { player.pauseVideo(); }
+export const resume = () => { player.playVideo(); }
 
-    }
+export function onstatechange(event:{target:any,data:number}){
+console.log(event);
+switch(event.data){
+    case 0:
+        resetVideo();
+    break;
+}
+
+}
 </script>
 
 <div>

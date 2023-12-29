@@ -5,6 +5,7 @@ import { PlayState } from './types/PlayState';
 
 export const playState=writable(PlayState.STOPPED);
 export const page:Writable<number> = writable(0);
+export const loopAudio:Writable<number>=writable(1);
 
 const MAXPAGE:number = 1;
 

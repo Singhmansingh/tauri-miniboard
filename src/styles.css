@@ -157,9 +157,10 @@ button {
   height: 20px;
 }
 
-.titlebar-button.left {
+.left {
   position: absolute;
   left:0;
+  display: flex;
   
 }
 .titlebar-button:hover {
