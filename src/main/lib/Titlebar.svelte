@@ -2,7 +2,7 @@
 import { appWindow } from '@tauri-apps/api/window'
 import {loopAudio} from '../store';
     import { sendLoopState } from '../ws';
-
+    import { WebviewWindow } from '@tauri-apps/api/window'
 export var playerConnected:number = 0;
 let audioLoop:number = 0;
 
@@ -30,8 +30,21 @@ function toggleLoopAudio(){
 
 }
 
+
+
 function openSettings(){
-  console.log('Launching Settings...');
+  const webview = new WebviewWindow('theUniqueLabel', {
+  url: 'client.html',
+})
+  console.log('openning settings')
+  webview.once('tauri://created', function () {
+  // webview window successfully created
+})
+
+webview.once('tauri://error', function (e) {
+  // an error occurred during webview window creation
+  console.log(e);
+})
 }
 
 </script>

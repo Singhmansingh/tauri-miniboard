@@ -1,5 +1,5 @@
 <script lang="ts">
-import { PlayState } from '../types/PlayState';
+import { PlayState } from '../main/types/PlayState';
 import {onDestroy,onMount} from 'svelte';
 
 import {playState,disconnect, url} from './clientstore';

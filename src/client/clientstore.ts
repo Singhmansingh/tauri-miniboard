@@ -1,5 +1,5 @@
 import { readable, type Readable, writable, type Writable } from 'svelte/store';
-import type { WsMessage } from '../types/WsMessage';
+import type { WsMessage } from '../main/types/WsMessage';
 
 
 export enum WS_STATE {
