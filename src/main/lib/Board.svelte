@@ -1,18 +1,34 @@
 <script lang="ts">
-    import {createEventDispatcher, onMount} from "svelte";
-    import {playState,TrackList,nextPage, page} from '../store';
-    import type { Keymap } from '../types/Keymap';
-    export let focused:number = 0;
-    export let current:number = 0;
+import { createEventDispatcher, onMount } from "svelte";
+import { playState, nextPage, page } from '../store';
+import type { Keymap } from '../types/Keymap';
+import type { Track } from "../types/Track";
+import { PlayState } from "../types/PlayState";
+
+    const GRID_SIZE = 3;
+    const KEY_MAP: Keymap = {
+        '7': 0, '8': 1, '9': 2,
+        '4': 3, '5': 4, '6': 5,
+        '1': 6, '2': 7, '3': 8,
+    };
+
+    let focusedindex:number = 0;
+    let currentindex:number = 0;
 
     let state:number;
     let currPage:number;
 
-    onMount(()=> {nextPage();});
+    let TrackList:Array<Track>=[];
 
-    page.subscribe((p)=> currPage=p);
+    onMount(()=> {
+        
+        loadPage(0);
 
-    const unsubscribe = playState.subscribe((v)=> state = v);
+        page.subscribe((p)=> currPage=p);
+        playState.subscribe((v)=> state = v);
+
+    });
+
 
     const dispatch=createEventDispatcher<{
         seturl: string,
@@ -20,73 +36,81 @@
         resume:null
     }>();
 
+    // let the main app handle store changes, pass to YT player from parent  
+    const pauseTrack = () => dispatch('pause');
+    const resumeTrack = () => dispatch('resume');
 
-    const setFocus = (i:number) => focused=i;
+    const setFocus = (i:number) => focusedindex=i;
+
+
+    async function loadPage(pg=0){
+        TrackList = await nextPage(pg);
+    }
     
 
     function moveFocus(dir:"x"|"y", amt:1|-1){
         switch(dir){
-            case "x": if(focused + amt < 9 && focused + amt >= 0) setFocus(focused+amt); break;
-            case "y": if(focused + amt*3 <9 && focused + amt*3 >= 0) setFocus(focused+amt*3); break;
+            // move on the x (+1 = right, -1 = left)
+            case "x": if(focusedindex + amt < GRID_SIZE**2 && focusedindex + amt >= 0) setFocus(focusedindex+amt); break;
+
+            // move on the y (on a 3x3, -3 = up, + 3 = down)
+            case "y": if(focusedindex + amt*GRID_SIZE <GRID_SIZE**2 && focusedindex + amt*GRID_SIZE >= 0) setFocus(focusedindex+amt*GRID_SIZE); break;
         }
     }
 
-    function onPress(i:number){
+    function onPress(index:number){
+        if(index<0) return;
         
-        if(state==1&&current==focused) pauseTrack(i);
-        else if(current!=focused) switchTrack(i);
-        else playTrack(i);
+        if(index==currentindex){
+            console.log(index,currentindex);
+            switch(state){
+                case PlayState.PLAYING: pauseTrack();break;
+                case PlayState.PAUSED: resumeTrack();break;
+            }
+        }
 
-        setFocus(i);
+        else {
+            switchTrack(index);
+        }
+
+        currentindex=index;
+        setFocus(index);
     }
 
-    function switchTrack(id:number){
-        console.log('switch',current,'to',id);
-        current=id;
-        dispatch("seturl",$TrackList.tracks[id].trackurl);
+    function switchTrack(index:number){
+        console.log('switch',currentindex,'to',index);
+        let trackurl=TrackList[index].trackurl;
+        dispatch("seturl",trackurl);
 
     }
 
     function numberPress(key:string){
-        focused=parseInt(key);
+        focusedindex=parseInt(key);
         
-        const keymap:Keymap = {
-            '7':0,'8':1,'9':2,
-            '4':3,'5':4,'6':5,
-            '1':6,'2':7,'3':8,
-        };
+        const mappedindex:number=KEY_MAP[key];
 
-        const mappedkey:number=keymap[key];
-
-        onPress(mappedkey);
+        onPress(mappedindex);
     }
 
-    function pauseTrack(id:number){
-        console.log('pause',id);
-        dispatch('pause');
 
+    
         
-
-    }
-    function playTrack(id:number){
-        console.log('play',id);
-        dispatch('resume');
-        current=id;
-    }
-        
-    const epd = (event:Event) => event.preventDefault();
 
     function on_key_down(event: KeyboardEvent) {
         if (event.repeat) return;
 
+        const epd = (event:Event) => event.preventDefault();
 
         switch (event.key) {
             case "ArrowRight": epd(event); moveFocus("x",1); break;
             case "ArrowLeft": epd(event); moveFocus("x",-1); break;
             case "ArrowUp": epd(event); moveFocus("y",-1); break;
             case "ArrowDown": epd(event); moveFocus("y",1); break;
-            case "Enter": epd(event); onPress(focused); break;
-            case "p": epd(event); nextPage(currPage+1); setFocus(0); break;
+
+            case "Enter": epd(event); onPress(focusedindex); break;
+
+            //next page
+            case "p": epd(event); loadPage(currPage+1); setFocus(0); break;
            
             case "7": case "8": case "9": 
             case "4": case "5": case "6":
@@ -101,14 +125,15 @@
 
 </script>
 
+<!-- register local keypresses on the miniboard  -->
 <svelte:window on:keydown={on_key_down}></svelte:window>
 
 <div class="grid">
-{#each $TrackList.tracks as track, i}
+{#each TrackList as track,i}
     <button id="btn-{i}"
     style="background-image: url({track.trackimg?track.trackimg:'https://i3.ytimg.com/vi/'+track.trackurl+'/mqdefault.jpg'});"
-    class="btn {focused==i?'focused':''} {current==i?'current '+(state==1?'playing':state==2?'paused':''):''}" 
-    on:click={()=>{setFocus(i);onPress(i);}}>{track.tracktitle}</button>
+    class="btn {focusedindex==(i)?'focused':''} {currentindex==i?'current '+(state==PlayState.PLAYING?'playing':state==PlayState.PAUSED?'paused':''):''}" 
+    on:click={()=>{onPress(i);}}>{track.tracktitle}</button>
  {/each}
 </div>
 

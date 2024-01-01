@@ -34,7 +34,7 @@ function toggleLoopAudio(){
 
 function openSettings(){
   const webview = new WebviewWindow('theUniqueLabel', {
-  url: 'client.html',
+  url: 'settings.html',
 })
   console.log('openning settings')
   webview.once('tauri://created', function () {

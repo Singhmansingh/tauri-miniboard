@@ -1,16 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+*,*::before,*::after {
+  box-sizing: border-box;
+}
+
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'League Spartan', sans-serif;
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
   color: #f3f3f3;
   background-color: #1b1b1b;
+  max-height: 100%;
+  overflow: hidden;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+
 }
 
 #app {
@@ -76,7 +86,6 @@ h1 {
   flex-shrink: 1;
 }
 
-input,
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -139,7 +148,7 @@ button {
 
 .titlebar {
   flex-shrink: 1;
-  background: #223a1f;
+  background: #46464654;
   user-select: none;
   display: flex;
   justify-content: flex-end;

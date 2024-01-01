@@ -9,7 +9,7 @@ import {loop} from '../clientstore';
 let currentURL:string;
 let playerElem:any;
 let player:YouTubePlayer;
-let loopState:number=0;
+let loopState:number=1;
 
 loop.subscribe(l => loopState=l);
 

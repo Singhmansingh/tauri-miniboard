@@ -1,5 +1,5 @@
 export type Track = {
-    trackid?: number,
+    trackid: number,
     tracktitle: string,
     trackurl: string,
     trackimg?: string

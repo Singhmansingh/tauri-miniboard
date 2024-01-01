@@ -2,23 +2,48 @@ import Database from "tauri-plugin-sql-api";
 import type { TrackListType,Track } from "./types/Track";
 
 
-async function getdb(){
+async function get_db(){
 
-    let db:Database = await Database.load('sqlite:main.db');
+    let _db:Database = await Database.load('sqlite:main.db');
 
-    return db;
+    return _db;
 }
 
+export async function selectManytoMany(mergetable:string,targettable:string,expression:string,basefield:string,basevalue:number){
+    let _db:Database = await get_db();
 
-export async function loadTracks(page:number) {
+    let query = `SELECT * from ${mergetable},${targettable} where ${expression} and ${mergetable}.${basefield}=${basevalue}`;
+    let res:Array<any> = await _db.select(query);
 
-
-    let db:Database = await getdb();
-    const perpage = 9;
-    const start = page * perpage;
-    console.log(start);
-    let res:Array<Track> = await db.select("SELECT * from TRACKS LIMIT $1,$2",[start,perpage]);
     return res;
 }
 
+async function get(query:string,params:Array<any>){
+    let _db:Database = await get_db();
+    let res:Array<any> = await _db.select(query,params);
+
+    return res;
+}
+
+async function single(query:string,params:Array<any>){
+    let _db:Database = await get_db();
+    let res:Array<any> = await _db.select(query,params);
+
+    if(res.length>=1) return res[0];
+    return null;
+}
+
+async function exec(query:string,params:Array<any>){
+    let _db:Database = await get_db();
+    await _db.execute(query,params);
+
+    return 1;
+}
+
   
+export const db = {
+    get,
+    exec,
+    first:single,
+    single
+}

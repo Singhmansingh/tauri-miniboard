@@ -1,11 +1,8 @@
 // @ts-nocheck
-
 import "../styles.css";
-import App from "./App.svelte";
+import SettingsApp from "./SettingsApp.svelte";
 
-
-
-const app = new App({
+const app = new SettingsApp({
   target: document.getElementById("app"),
 });
 
