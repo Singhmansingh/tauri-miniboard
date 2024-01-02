@@ -1,5 +1,5 @@
 import { readable, type Readable, writable, type Writable } from 'svelte/store';
-import type { TrackListType,Track } from "./types/Track";
+import type {Track } from "./types/Track";
 import { selectManytoMany,db } from './db';
 import { PlayState } from './types/PlayState';
 import type { Board } from './types/Boards';
@@ -10,12 +10,6 @@ export const page:Writable<number> = writable(0);
 export const loopAudio:Writable<number>=writable(1);
 
 const MAXPAGE:number = 2;
-
-export const TrackList:Writable<TrackListType> = writable({
-    listname:"main",
-    platform:"youtube",
-    tracks:[]
-})
 
 export async function nextPage(pg:number=0){
 

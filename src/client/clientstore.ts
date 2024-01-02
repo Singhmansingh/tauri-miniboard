@@ -29,15 +29,9 @@ export function disconnect(){
 
 
 ws.onmessage = function(e){
-    const reader = new FileReader();
 
-    reader.onload = function() {
-        let res = reader.result?.toString() || '{}';
-      let data = JSON.parse(res);
-      handle_message(data);
-    };
-
-    reader.readAsText(e.data);
+   let data:WsMessage = JSON.parse(e.data as string);
+   handle_message(data);
 }
 
 function handle_message(msg:WsMessage){

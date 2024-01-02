@@ -3,6 +3,7 @@ import { appWindow } from '@tauri-apps/api/window'
 import {loopAudio} from '../store';
     import { sendLoopState } from '../ws';
     import { WebviewWindow } from '@tauri-apps/api/window'
+import {shell} from '@tauri-apps/api';
 export var playerConnected:number = 0;
 let audioLoop:number = 0;
 
@@ -20,6 +21,10 @@ function close(){
     appWindow.close();
 }
 
+function openClient(){
+  shell.open('http://localhost:1420/client.html')
+}
+
 function toggleLoopAudio(){
   loopAudio.update(()=>{
     if(audioLoop==0) return 1;
@@ -29,6 +34,7 @@ function toggleLoopAudio(){
   sendLoopState(audioLoop);
 
 }
+
 
 
 
@@ -57,11 +63,14 @@ webview.once('tauri://error', function (e) {
     <div tabindex="-1" class="titlebar-button" role="button" id="titlebar-external" title="loop audio" on:keydown={e => {if(e.key=='Enter') toggleLoopAudio();}} on:click={toggleLoopAudio}>
       <i class="fa-solid fa-repeat {audioLoop?'on':'off'}"></i>
     </div>
+    <div tabindex="-1" class="titlebar-button" role="button" id="titlebar-external" title="player connected" on:keydown={e => {if(e.key=='Enter') openClient();}} on:click={openClient}>
     {#if playerConnected}
-    <div class="titlebar-button" style="pointer-events: none !important;" role="button" id="titlebar-external" title="player connected">
       <i class="fa-solid fa-tower-broadcast on"></i>
-    </div>
+    {:else}
+      <i class="fa-solid fa-tower-broadcast off"></i>
     {/if}
+    
+    </div>
   </div>
   
     <a tabindex="0" class="titlebar-button" role="button" id="titlebar-minimize" on:keydown={(e)=>e.key=="Enter"?minimize():null} on:click={minimize}>

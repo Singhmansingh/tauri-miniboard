@@ -8,14 +8,14 @@ export const playerConnected:Writable<number> = writable(0);
 
 function _updateResponse(returnValue: Message) {
 
-  ///@ts-ignore
-  const binaryArray = new Uint8Array(returnValue.data);
-
-  // Create a TextDecoder instance with the desired encoding (e.g., 'utf-8')
-  const textDecoder = new TextDecoder('utf-8');
+  console.log('WS: message',returnValue);
 
   // Convert the binary array to a string
-  const resultString = JSON.parse(textDecoder.decode(binaryArray));
+  const resultString = JSON.parse(returnValue.data as string);
+
+  console.log('WS: parsed',resultString);
+
+
 
   handle_message(resultString);
 

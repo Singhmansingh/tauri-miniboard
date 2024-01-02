@@ -1788,6 +1788,7 @@ dependencies = [
 name = "miniboard"
 version = "0.0.0"
 dependencies = [
+ "futures-channel",
  "futures-util",
  "serde",
  "serde_json",
