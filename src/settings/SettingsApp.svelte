@@ -4,17 +4,24 @@ import type { Board } from "../main/types/Boards";
 import SideBar from "./lib/SideBar.svelte";
 import type { Track } from "../main/types/Track";
 import { db,selectManytoMany } from "../main/db";
+    import type { Platform } from "../main/types/Platform";
 
 
 let boards:Array<Board> = [];
 
 let currentBoard:Board|undefined;
 
+let platforms:Array<Platform> = [];
+
 var focusedboardid:number;
 var focusedtrack:Track|null;
 
 async function getBoards(){
-    boards = await db.get('select * from boards order by active desc,boardkey',[]);
+    boards = await db.get('select * from boards order by active desc,boardkey');
+}
+
+async function getPlatforms(){
+    platforms = await db.get('select * from platforms');
 }
 
 
@@ -33,7 +40,8 @@ async function refreshBoardTrackList(boardid:number){
 let tracks:Array<Track|null> = [];
 
 onMount(async ()=>{
-    await getBoards()
+    await getPlatforms();
+    await getBoards();
 });
 
 function fillEmptyTracks(){
@@ -79,7 +87,7 @@ async function addTrack(boardid:number){
 
     await db.exec('insert into tracks(tracktitle,trackurl,trackimg) values($1,$2,$3)',[newtitle,newurl,newimg])
 
-    let rs:Track = await db.first('select trackid from tracks order by trackid desc limit 1;',[]);
+    let rs:Track = await db.first('select trackid from tracks order by trackid desc limit 1;');
     let trackid=rs.trackid;
     
     await db.exec('insert into boardtracks(boardid,trackid) values($1,$2)',[boardid,trackid]);
@@ -173,19 +181,28 @@ async function deleteBoard(){
 
         </div>
         <div class="data">
-                <label for="tracktitle">Title:</label><input id="tracktitle" value="{focusedtrack?.tracktitle??''}"/>
-                <label for="trackurl">URL:</label><input id="trackurl" value="{focusedtrack?.trackurl??''}"/>
-                <label for="trackurl">Image:</label><input id="trackimg" value="{focusedtrack?.trackimg??''}"/>
+                <label for="tracktitle">Title:</label><input type="text" id="tracktitle" value="{focusedtrack?.tracktitle??''}"/>
+                <label for="trackurl">Video:</label>
+                <span class="track-url">
+                    <select id="platform">
+                        {#each platforms as platform}
+                            <option selected={focusedtrack?.platformid==platform.platformid} value={platform.platformid}>{platform.platformname}</option>
+                        {/each}
+                    </select>
+                    <input id="trackurl" type="text"  placeholder="video/audio id" value="{focusedtrack?.trackurl??''}"/>
+                    
+                </span>
+                <label for="trackurl" >Image:</label><input  type="text" id="trackimg" value="{focusedtrack?.trackimg??''}"/>
+                <div class="button-controls">
+
                 {#if !focusedtrack}
-                    <input type="button" value="add" on:click={()=> currentBoard?addTrack(currentBoard?.boardid):null}/>
+                    <input type="button" class="good" value="Add" on:click={()=> currentBoard?addTrack(currentBoard?.boardid):null}/>
                 {:else}
-                    <div class="button-controls">
-                        <input type="button" value="save" on:click={()=> updateTrack(focusedtrack?.trackid)}/>
-                        <input type="button" value="delete" on:click={()=> removeTrack()}/>
-
-                    </div>
-
+                        <input type="button" class="warn" value="Delete" on:click={()=> removeTrack()}/>
+                        <input type="button" class="good" value="Save" on:click={()=> updateTrack(focusedtrack?.trackid)}/>
                 {/if}
+            </div>
+
         </div>
 
     </section>
@@ -194,7 +211,7 @@ async function deleteBoard(){
 </main>
 
 <style lang="scss">
-
+$green:rgb(0, 255, 47);
     .header {
 
         display: flex;
@@ -220,6 +237,7 @@ async function deleteBoard(){
             padding: 0;
             background: none;
             color: red;
+            box-shadow: none;
             margin: 0;
         }
     }
@@ -239,7 +257,7 @@ async function deleteBoard(){
     }
 
     aside {
-        background-color: lightslategray;
+        background-color: rgba(255, 255, 255, 0.118);
     }
 
     section {
@@ -249,12 +267,25 @@ async function deleteBoard(){
     }
 
     .data {
-        background-color: rgba(112, 128, 144, 0.512);
+        $gap: 0.5em;
+        background-color: rgba(54, 54, 54, 0.512);
         display: grid;
         padding: 5px;
         padding: 1em;
         grid-template-columns: min-content 1fr;
-        gap:0.5em;
+        gap:$gap;
+
+        
+        .track-url {
+            display: flex;
+            gap:$gap;
+            input {
+                flex:1;
+            }
+            select {
+                flex-shrink: 1;
+            }
+        }
     }
 
     .track-grid {
@@ -287,7 +318,8 @@ async function deleteBoard(){
         position: relative;
 
         &.focused {
-            box-shadow: 0 0 10px 5px green !important;
+            box-shadow: 0 0 10px  $green !important;
+                border: 2px solid $green !important;
         }
 
         &:hover {
@@ -324,10 +356,44 @@ async function deleteBoard(){
 
     .button-controls {
         display: flex;
-        gap: 0.2em;
+        justify-content: flex-end;
+        gap: 0.5em;
         grid-column: span 2;
         input {
             flex-shrink: 1;
+        }
+    }
+
+
+    input[type="text"],select {
+        border-radius: 5px;
+        border: none;
+        padding: 2px 5px;
+        background-color: whitesmoke;
+    }
+
+    input[type="button"] {
+        background-color: lightcyan;
+        border: none;
+        border-radius: 5px;
+        box-shadow: none;
+        font-family: inherit;
+        padding: 5px 10px;
+        font-size: 0.9em;
+        font-weight: bold;
+
+        &:hover {
+            cursor: pointer;
+            filter: brightness(0.8);
+        }
+
+        &.good {
+            background-color: rgb(165, 249, 165);
+        }
+
+        &.warn {
+            background-color: rgb(245, 78, 78);
+
         }
     }
 

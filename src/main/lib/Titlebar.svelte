@@ -52,47 +52,43 @@ webview.once('tauri://error', function (e) {
 <div data-tauri-drag-region class="titlebar">
   <div class="left">
     <div tabindex="-1" class="titlebar-button" role="button" id="titlebar-external" title="settings" on:keydown={e => {if(e.key=='Enter') openSettings();}} on:click={openSettings}>
-      <img
-        src="https://api.iconify.design/mdi:gear.svg"
-        alt="minimize"
-      />
+      <i class="fa-solid fa-gear"></i>
     </div>
     <div tabindex="-1" class="titlebar-button" role="button" id="titlebar-external" title="loop audio" on:keydown={e => {if(e.key=='Enter') toggleLoopAudio();}} on:click={toggleLoopAudio}>
-      {#if audioLoop}
-        <img
-          src="https://api.iconify.design/mdi:repeat.svg?color=green"
-          alt="minimize"
-        />
-      {:else}
-        <img
-          src="https://api.iconify.design/mdi:repeat.svg?color=red"
-          alt="minimize"
-        />
-      {/if}
+      <i class="fa-solid fa-repeat {audioLoop?'on':'off'}"></i>
     </div>
     {#if playerConnected}
     <div class="titlebar-button" style="pointer-events: none !important;" role="button" id="titlebar-external" title="player connected">
-      <img
-        src="https://api.iconify.design/mdi:volume.svg?color=green"
-        alt="minimize"
-      />
+      <i class="fa-solid fa-tower-broadcast on"></i>
     </div>
     {/if}
   </div>
   
     <a tabindex="0" class="titlebar-button" role="button" id="titlebar-minimize" on:keydown={(e)=>e.key=="Enter"?minimize():null} on:click={minimize}>
-      <img
-        src="https://api.iconify.design/mdi:window-minimize.svg"
-        alt="minimize"
-      />
+      <i class="fa-solid fa-minus"></i>
     </a>
     <a tabindex="0" class="titlebar-button" role="button" on:keydown={(e)=>e.key=="Enter"?maximize():null} id="titlebar-maximize" on:click={maximize}>
-      <img
-        src="https://api.iconify.design/mdi:window-maximize.svg"
-        alt="maximize"
-      />
+      <i class="fa-regular fa-square"></i>
     </a>
     <a tabindex="0" class="titlebar-button" role="button" id="titlebar-close" on:keydown={(e)=>e.key=="Enter"?close():null}  on:click={close}>
-      <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+      <i class="fa-solid fa-xmark"></i>
     </a>
   </div>
+
+  <style lang="scss">
+
+    i {
+      color: black;
+      font-size: 0.7em;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .on {
+      color: green;
+    }
+    .off {
+      color: black;
+    }
+  </style>

@@ -70,7 +70,6 @@ button.add {
 .board-list {
     display: grid;
     grid-template-columns: 1fr;
-    grid-auto-rows: 60px;
     row-gap: 10px;
     margin-top: 10px;
 }
@@ -79,11 +78,12 @@ button.add {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.262);
+    background-color: rgba(255, 255, 255, 0.059);
     border-radius: 5px;
     align-items: center;
     padding: 15px;
     color: white;
+    box-sizing: border-box;
     h3 {
 
         margin:0;
@@ -94,8 +94,14 @@ button.add {
     }
 
     &.focused {
-        box-shadow: 0 0 10px red;
+        $green:rgb(0, 255, 47);
+        box-shadow: 0 0 10px $green;
+        border: 3px  ridge $green;
     }
+}
+
+input[type="checkbox"]:checked {
+    background-color: springgreen;
 }
 </style>
 

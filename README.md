@@ -13,3 +13,6 @@ To play through browser, open at http://localhost:1420/client.html. Audio will a
 ## Recommended IDE Setup
 
 [VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+
+
+rename "main.db.example" to "main.db" and place in tauri data folder (ex. %appdata%/roaming/com.tauri.dev)

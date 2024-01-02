@@ -21,6 +21,7 @@
   -webkit-text-size-adjust: 100%;
 
 
+  border: 2px solid rgba(255, 255, 255, 0.073);
 }
 
 #app {
@@ -173,5 +174,6 @@ button {
   
 }
 .titlebar-button:hover {
-  background: rgba(245, 245, 245, 0.237);
+  background: rgba(245, 245, 245, 0.084);
+  cursor: pointer;
 }

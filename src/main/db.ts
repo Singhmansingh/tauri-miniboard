@@ -1,5 +1,5 @@
 import Database from "tauri-plugin-sql-api";
-import type { TrackListType,Track } from "./types/Track";
+import type { Track } from "./types/Track";
 
 
 async function get_db(){
@@ -18,14 +18,14 @@ export async function selectManytoMany(mergetable:string,targettable:string,expr
     return res;
 }
 
-async function get(query:string,params:Array<any>){
+async function get(query:string,params:Array<any>=[]){
     let _db:Database = await get_db();
     let res:Array<any> = await _db.select(query,params);
 
     return res;
 }
 
-async function single(query:string,params:Array<any>){
+async function single(query:string,params:Array<any>=[]){
     let _db:Database = await get_db();
     let res:Array<any> = await _db.select(query,params);
 

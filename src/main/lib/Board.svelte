@@ -133,11 +133,11 @@ import { PlayState } from "../types/PlayState";
     <button id="btn-{i}"
     style="background-image: url({track.trackimg?track.trackimg:'https://i3.ytimg.com/vi/'+track.trackurl+'/mqdefault.jpg'});"
     class="btn {focusedindex==(i)?'focused':''} {currentindex==i?'current '+(state==PlayState.PLAYING?'playing':state==PlayState.PAUSED?'paused':''):''}" 
-    on:click={()=>{onPress(i);}}>{track.tracktitle}</button>
+    on:click={()=>{onPress(i);}}><span>{track.tracktitle}</span></button>
  {/each}
 </div>
 
-<style>
+<style lang="scss">
 .grid{
     display: grid;
     grid-template-columns: repeat(3,1fr);
@@ -159,6 +159,14 @@ import { PlayState } from "../types/PlayState";
     color: white;
     font-weight: bold;
     font-size: 5vmin;
+
+    span {
+        background-color: rgba(0, 0, 0, 0.834);
+        line-height: 1em;
+        box-sizing: border-box;
+        backdrop-filter: blur(100%);
+    }
+    
 }
 
 .focused{
@@ -166,15 +174,15 @@ import { PlayState } from "../types/PlayState";
 }
 
 .current {
-    box-shadow: 0 0 15px 3px orange;
+    box-shadow: 0 0  6px 3px  orange;
 }
 
 .playing {
-    box-shadow: 0 0 15px 3px green;
+    box-shadow: 0 0 6px 3px green;
 }
 
 .paused {
-    box-shadow: 0 0 15px 3px red;
+    box-shadow: 0 0 6px 3px red;
 
 }
 </style>
