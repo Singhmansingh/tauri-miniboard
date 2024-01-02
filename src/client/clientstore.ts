@@ -9,7 +9,7 @@ export enum WS_STATE {
 }
 
 export const url:Writable<string> = writable('');
-export const loop:Writable<number> = writable(0);
+export const loop:Writable<number> = writable(1);
 export const playState=writable(-1)
 
 let ws:WebSocket = new WebSocket('ws://127.0.0.1:8081');

@@ -8,7 +8,8 @@ export default defineConfig(async () => ({
     rollupOptions:{
       input:{
         main: "index.html",
-        nested: "client.html",
+        client: "client.html",
+        settings: "settings.html"
       }
     }
   },

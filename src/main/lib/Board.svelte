@@ -14,6 +14,7 @@ import { PlayState } from "../types/PlayState";
 
     let focusedindex:number = 0;
     let currentindex:number = 0;
+    let statecolor:string;
 
     let state:number;
     let currPage:number;
@@ -25,7 +26,10 @@ import { PlayState } from "../types/PlayState";
         loadPage(0);
 
         page.subscribe((p)=> currPage=p);
-        playState.subscribe((v)=> state = v);
+        playState.subscribe((v)=> {
+            state = v;
+            setStateColor();
+        });
 
     });
 
@@ -66,6 +70,7 @@ import { PlayState } from "../types/PlayState";
             switch(state){
                 case PlayState.PLAYING: pauseTrack();break;
                 case PlayState.PAUSED: resumeTrack();break;
+                case PlayState.STOPPED: switchTrack(index);break;
             }
         }
 
@@ -122,6 +127,16 @@ import { PlayState } from "../types/PlayState";
 
     }
 
+    const setStateColor = ()=>{
+        switch(state) {
+            case PlayState.PLAYING: return statecolor='playing';
+            case PlayState.PAUSED: return statecolor='paused';
+            case PlayState.BUFFERING: return statecolor='buffering';
+            case PlayState.STOPPED: return statecolor='stopped';
+            default: return statecolor='';
+        }
+    }
+
 
 </script>
 
@@ -132,7 +147,7 @@ import { PlayState } from "../types/PlayState";
 {#each TrackList as track,i}
     <button id="btn-{i}"
     style="background-image: url({track.trackimg?track.trackimg:'https://i3.ytimg.com/vi/'+track.trackurl+'/mqdefault.jpg'});"
-    class="btn {focusedindex==(i)?'focused':''} {currentindex==i?'current '+(state==PlayState.PLAYING?'playing':state==PlayState.PAUSED?'paused':''):''}" 
+    class="btn {focusedindex==(i)?'focused':''} {currentindex==i?'current '+statecolor:''} " 
     on:click={()=>{onPress(i);}}><span>{track.tracktitle}</span></button>
  {/each}
 </div>
@@ -173,7 +188,7 @@ import { PlayState } from "../types/PlayState";
     filter: brightness(1) !important;
 }
 
-.current {
+.buffering {
     box-shadow: 0 0  6px 3px  orange;
 }
 
@@ -185,4 +200,5 @@ import { PlayState } from "../types/PlayState";
     box-shadow: 0 0 6px 3px red;
 
 }
+
 </style>

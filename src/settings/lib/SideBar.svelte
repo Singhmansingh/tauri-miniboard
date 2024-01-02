@@ -84,6 +84,9 @@ button.add {
     padding: 15px;
     color: white;
     box-sizing: border-box;
+    &:hover{
+        cursor: pointer;
+    }
     h3 {
 
         margin:0;

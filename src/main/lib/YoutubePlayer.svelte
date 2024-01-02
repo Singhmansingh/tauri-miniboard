@@ -3,16 +3,19 @@ import type { Options, YouTubePlayer } from 'youtube-player/dist/types';
 
 import YoutubePlayer from "youtube-player";
 import { onMount } from 'svelte';
-import {playState} from '../store';
+import {playState,loopAudio} from '../store';
 import {PlayState} from '../types/PlayState';
 
 export var hasPlayer:number;
 
-let currentURL:string;
   let playerElem:any;
   let player:YouTubePlayer;
+  let islooped:number;
 
-  onMount(() => createPlayer());
+  onMount(() => {
+    createPlayer();
+    loopAudio.subscribe(l => islooped=l);
+  });
 
   const options:Options = {
     //  see https://developers.google.com/youtube/player_parameters
@@ -27,8 +30,14 @@ let currentURL:string;
   }
 
   function resetVideo(){
-    player.seekTo(0,false);
-    resume();
+    if(islooped){
+      player.seekTo(0,false);
+      resume();
+    }
+    else {
+      playState.update(()=> PlayState.STOPPED);
+    }
+
   }
 
   export function setUrl(e:CustomEvent<string>){
