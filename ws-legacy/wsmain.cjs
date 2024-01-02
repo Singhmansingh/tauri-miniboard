@@ -1,3 +1,5 @@
+// depreciated; Websocket handled by Rust
+
 // Import the 'ws' library
 const WebSocket = require('ws');
 
