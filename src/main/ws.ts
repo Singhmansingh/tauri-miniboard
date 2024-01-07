@@ -23,7 +23,7 @@ function _updateResponse(returnValue: Message) {
 
 export async function connect() {
     try {
-      ws = await WebSocket.connect("ws://127.0.0.1:8081").then((r) => {
+      ws = await WebSocket.connect("ws://127.0.0.1:8833").then((r) => {
         console.log('ws Connected')
         return r;
       });

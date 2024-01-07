@@ -22,7 +22,7 @@ type Tx = UnboundedSender<Message>;
 type PeerMap = Arc<Mutex<HashMap<SocketAddr, Tx>>>;
 
 async fn start_server() {
-    let addr = env::args().nth(1).unwrap_or_else(|| "127.0.0.1:8081".to_string());
+    let addr = env::args().nth(1).unwrap_or_else(|| "127.0.0.1:8833".to_string());
 
     let state = PeerMap::new(Mutex::new(HashMap::new()));
   

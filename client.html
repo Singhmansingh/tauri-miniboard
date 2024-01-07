@@ -1,15 +1,98 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Client</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <title>Client</title>
+</head>
 
-  <body>
-    
-    <div id="app"></div>
-    <script type="module" src="/src/client/clientmain.ts"></script>
-  </body>
+<body>
+  <div id="state"></div>
+  <div id="player"></div>
+  
+  <script>
+
+    $(()=>{
+      $('#state').data('loopState',1);
+      registerWebsocket();
+    })
+
+    var player;
+    var ws;
+
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', { 
+        videoId: 'nQLJNCDa4GA',
+        playerVars: { 'autoplay': 1,'playsinline': 1 },
+        events: { 'onStateChange': onPlayerStateChange }
+      });
+    }
+
+    function setState(state=-1){
+      
+      switch(state){
+        case 2: pause(); break;
+        case 1: resume(); break;
+      }
+
+      $('#state').data('playerState',state);
+
+
+    }
+
+    function setUrl(url="") {
+      $('#state').data('url',url);
+      if(player) player.loadVideoById(url);
+    }
+
+    const pause = () => { player.pauseVideo(); }
+    const resume = () => { player.playVideo(); }
+
+    function onPlayerStateChange(event) {
+      switch(event.data){
+          case 0: resetVideo(); break;
+      }
+    }
+
+  function resetVideo(){
+    let loopState = $('#state').data('loopState');
+    if(loopState){
+        player.seekTo(0,false);
+        resume();
+    }
+  }
+
+  const log = (msg) => console.log(msg);
+
+  function registerWebsocket(){
+    let ws = new WebSocket('ws://127.0.0.1:8833');
+
+    ws.onopen = function(ev) { log("Connection established"); ws.send(JSON.stringify({msgtype:'ack'})); }
+    ws.onclose = function(ev) { log("Disconnected"); ws.send(JSON.stringify({msgtype:'dc'})); }
+    ws.onmessage = function(ev) { log("Message received"); handle_message(JSON.parse(ev.data));}
+
+    function handle_message(msg){
+      console.log(msg);
+        switch(msg.msgtype){
+            case 'url':  setUrl(msg.url); break;
+            case 'state': setState(msg.state); break;
+            case 'loop': $('#state').data('loopState',msg.loopState??1); break;
+
+        }
+    }
+
+  }
+
+  </script>
+</body>
 </html>
