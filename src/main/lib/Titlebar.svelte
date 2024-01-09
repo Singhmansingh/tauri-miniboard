@@ -22,7 +22,7 @@ function close(){
 }
 
 function openClient(){
-  shell.open('http://localhost:1420/client.html')
+  shell.open('http://localhost:8844')
 }
 
 function toggleLoopAudio(){

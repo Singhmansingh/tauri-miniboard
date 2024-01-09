@@ -3,8 +3,6 @@
 
 ]
 
-
-
 use std::{
     collections::HashMap,
     env,
@@ -20,6 +18,12 @@ use tokio_tungstenite::tungstenite::protocol::Message;
 
 type Tx = UnboundedSender<Message>;
 type PeerMap = Arc<Mutex<HashMap<SocketAddr, Tx>>>;
+
+use std::fs;
+use std::io::Read;
+use std::net::TcpListener as stdTcpListener;
+use std::net::TcpStream as stdTcpStream;
+use std::io::prelude::*;
 
 async fn start_server() {
     let addr = env::args().nth(1).unwrap_or_else(|| "127.0.0.1:8833".to_string());
@@ -80,6 +84,44 @@ async fn handle_connection(peer_map: PeerMap, raw_stream: TcpStream, addr: Socke
     
 }
   
+async fn start_tcp_server() {
+    let addr = env::args().nth(1).unwrap_or_else(|| "127.0.0.1:8844".to_string());
+
+    // Create the event loop and TCP listener we'll accept connections on.
+    let try_socket = stdTcpListener::bind(&addr);
+    let listener = try_socket.expect("Failed to bind");
+
+    println!("Listening on: {}", addr);
+  
+    while let Ok((stream, _)) = listener.accept() {
+        tokio::spawn(handle_tcp_connection(stream));
+    }
+}
+
+async fn handle_tcp_connection(mut stream: stdTcpStream){
+    let mut buffer = [0;1024];
+    stream.read(&mut buffer).unwrap();
+
+    // let get = b"GET / HTTP/1.1\r\n";
+
+    let (status_line, filename) = ("HTTP/1.1 200 OK","client.html");
+
+    let contents = fs::read_to_string(filename).unwrap();
+
+    let response = format!(
+        "{}\r\nContent-Length: {}\r\n\r\n{}",
+        status_line,
+        contents.len(),
+        contents
+    );
+
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
+
+
+}
+
+
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -89,6 +131,7 @@ fn greet(name: &str) -> String {
 
 fn main() {
     tauri::async_runtime::spawn(start_server());
+    tauri::async_runtime::spawn(start_tcp_server());
     
 
     tauri::Builder::default()
